@@ -177,6 +177,7 @@ task call_merge_haplotypes_chrom_svindel {
     File svindel_bed_h2
     File callable_h1
     File callable_h2
+    File batchFile
     String chrom
     String threads
     String mem_gb
@@ -190,6 +191,7 @@ task call_merge_haplotypes_chrom_svindel {
     tar zxvf ~{svindel_bed_h2}
     tar zxvf ~{callable_h1}
     tar zxvf ~{callable_h2}
+    tar zxvf ~{batchFile}
     mv /opt/pav /cromwell_root/
     tree
     snakemake -s pav/Snakefile --cores ~{threads} temp/~{sample}/bed/bychrom/~{svtype}/~{chrom}.bed.gz
@@ -221,6 +223,7 @@ task call_merge_haplotypes_chrom_snv {
     File callable_h1
     String sample
     File callable_h2
+    File batchFile
     String chrom
     String threads
     String mem_gb
@@ -234,6 +237,7 @@ task call_merge_haplotypes_chrom_snv {
     tar zxvf ~{snvBed_h2}
     tar zxvf ~{callable_h1}
     tar zxvf ~{callable_h2}
+    tar zxvf ~{batchFile}
     mv /opt/pav /cromwell_root/
     tree
     snakemake -s pav/Snakefile --cores ~{threads} temp/~{sample}/bed/bychrom/~{svtype}/~{chrom}.bed.gz

@@ -109,6 +109,43 @@ task data_ref_contig_table{
   }
 }
 
+
+task data_call_merge_batch_table {
+  input {
+    File pav_conf
+    File pav_asm
+    File contigInfo
+    String threads
+    String mem_gb
+  }
+  command <<<
+    source activate lr-pav
+    set -eux
+    cp ~{pav_conf} ./config.json
+    tar zxvf ~{pav_asm}
+    tar zxvf ~{contigInfo}
+    mv /opt/pav /cromwell_root/
+    tree
+    snakemake -s snakemake -s pav/Snakefile --cores ~{threads} data/ref/merge_batch.tsv.gz
+    tar zcvf merge_batch.tgz data/ref/merge_batch.tsv.gz
+  >>>
+  output {
+    Array[File] snakemake_logs = glob(".snakemake/log/*.snakemake.log")
+    File mergeBatch = 'merge_batch.tgz'
+  }
+  ############################
+  runtime {
+      cpu:            threads
+      memory:         mem_gb + " GiB"
+      disks:          "local-disk " + 1000 + " HDD"
+      bootDiskSizeGb: 50
+      preemptible:    3
+      maxRetries:     1
+      docker:         "us.gcr.io/broad-dsp-lrma/lr-pav:1.2.1"
+  }
+
+}
+
 task write_vcf {
   input {
     File pav_conf
