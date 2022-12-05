@@ -20,8 +20,6 @@ workflow pav {
     File config
   }
 
-  Array[Array[String]] chroms = read_tsv(refFai)
-
   call setup.tar_asm {
     input:
       ref = ref,
@@ -518,7 +516,23 @@ workflow pav {
       mem_gb = "32",
       sample = sample
   }
-  scatter(chrom in chroms) {
+  call setup.data_ref_contig_table {
+    input:
+      pav_conf = config,
+      pav_asm = tar_asm.asm_tar,
+      threads = "1",
+      mem_gb = "4",
+      sample = sample
+  }
+  call setup.data_call_merge_batch_table {
+    input:
+      pav_conf = config,
+      pav_asm = tar_asm.asm_tar,
+      contigInfo = data_ref_contig_table.contigInfo,
+      threads = "1",
+      mem_gb = "4",
+  }
+  scatter(i in range(20)) {
      call call_pav.call_merge_haplotypes_chrom_svindel as call_merge_haplotypes_chrom_svindel_ins {
       input:
         pav_conf = config,
@@ -528,7 +542,8 @@ workflow pav {
         svindel_bed_h2 = call_integrate_sources_h2.all_vars_bed,
         callable_h1 = call_mappable_bed_h2.bed,
         callable_h2 = call_mappable_bed_h1.bed,
-        chrom = chrom[0],
+        batchFile = data_call_merge_batch_table.mergeBatch,
+        chrom = i,
         threads = "8",
         mem_gb = "12",
         sample = sample
@@ -542,7 +557,8 @@ workflow pav {
         svindel_bed_h2 = call_integrate_sources_h2.all_vars_bed,
         callable_h1 = call_mappable_bed_h2.bed,
         callable_h2 = call_mappable_bed_h1.bed,
-        chrom = chrom[0],
+        batchFile = data_call_merge_batch_table.mergeBatch,
+        chrom = i,
         threads = "8",
         mem_gb = "12",
         sample = sample
@@ -556,13 +572,14 @@ workflow pav {
         svindel_bed_h2 = call_integrate_sources_h2.all_vars_bed,
         callable_h1 = call_mappable_bed_h2.bed,
         callable_h2 = call_mappable_bed_h1.bed,
-        chrom = chrom[0],
+        batchFile = data_call_merge_batch_table.mergeBatch,
+        chrom = i,
         threads = "8",
         mem_gb = "12",
         sample = sample
      }
   }
-  scatter(chrom in chroms) {
+  scatter(i in range(20)) {
      call call_pav.call_merge_haplotypes_chrom_snv {
       input:
         pav_conf = config,
@@ -572,7 +589,8 @@ workflow pav {
         snvBed_h2 = call_integrate_sources_h2.all_vars_bed,
         callable_h1 = call_mappable_bed_h2.bed,
         callable_h2 = call_mappable_bed_h1.bed,
-        chrom = chrom[0],
+        batchFile = data_call_merge_batch_table.mergeBatch,
+        chrom = i,
         threads = "8",
         mem_gb = "12",
         sample = sample
@@ -644,14 +662,6 @@ workflow pav {
       snvBed = call_merge_haplotypes_snv.bed,
       threads = "4",
       mem_gb = "16",
-      sample = sample
-  }
-  call setup.data_ref_contig_table {
-    input:
-      pav_conf = config,
-      pav_asm = tar_asm.asm_tar,
-      threads = "1",
-      mem_gb = "4",
       sample = sample
   }
   call setup.write_vcf {
