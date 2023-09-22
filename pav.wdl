@@ -4,7 +4,6 @@ import "wdl/setup_wrapup.wdl" as setup
 import "wdl/align.wdl" as align
 import "wdl/call.wdl" as call_pav
 import "wdl/call_inv.wdl" as call_inv
-import "wdl/call_lg.wdl" as call_lg
 
 
 workflow pav {
@@ -91,8 +90,8 @@ workflow pav {
     input:
       pav_conf = config,
       pav_asm = tar_asm.asm_tar,
-      mappable_h2 = call_mappable_bed_h2.bed
-      mappable_h1 = call_mappable_bed_h1.bed
+      mappable_h2 = call_mappable_bed_h2.ruleOut
+      mappable_h1 = callcall_mappable_bed_h1.ruleOut
       inv_h1 = call_inv_batch_merge_h1.bed
       inv_h2 = call_inv_batch_merge_h2.bed
       threads = "48",
@@ -103,5 +102,9 @@ workflow pav {
   }
   output {
     File vcf = write_vcf.vcf
+    File mappable_bed_h1 = callcall_mappable_bed_h1.bed
+    File mappable_bed_h2 = callcall_mappable_bed_h2.bed
+    File align_h1 = align_cut_tig_overlap_hap_h1.rawAlign
+    File align_h2 = align_cut_tig_overlap_hap_h2.rawAlign
   }
 }

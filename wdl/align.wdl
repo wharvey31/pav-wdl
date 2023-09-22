@@ -1,6 +1,6 @@
 version 1.0
 
-task align_cut_tig_overlap_hap {
+task align_cut_tig_overlap {
   input {
     File pav_conf
     File pav_asm

@@ -27,7 +27,8 @@ task call_mappable_bed {
   >>>
   output {
     Array[File] snakemake_logs = glob(".snakemake/log/*.snakemake.log")
-    File bed = "call_mappable_bed_~{hap}_~{sample}.tgz"
+    File bed = "results/~{sample}/callable/callable_regions_~{hap}_500.bed.gz"
+    File ruleOut = "call_mappable_bed_~{hap}_~{sample}.tgz"
   }
   ############################
   runtime {
