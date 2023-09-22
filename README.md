@@ -1,5 +1,5 @@
 # pav-wdl
-Workspace for WDL implementation of PAV v2.1.0
+Workspace for WDL implementation of PAV v2.3.2
 
 This is a desynchronized replication of PAV (https://github.com/EichlerLab/pav) for implementation in WDL for use by Cromwell or any WDL compatible platform.
 

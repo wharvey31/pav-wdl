@@ -55,6 +55,6 @@ RUN apt-get -qqy update --fix-missing && \
     apt-get -qqy dist-upgrade && \
     apt-get -qqy install --no-install-recommends tree
 
-ARG PAV_VERSION=1.2.1
+ARG PAV_VERSION=2.3.2
 RUN mkdir -p /opt/ && \
     git clone -b ${PAV_VERSION} --single-branch --recursive https://github.com/EichlerLab/pav.git /opt/pav
