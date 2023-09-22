@@ -4,9 +4,7 @@ task align_cut_tig_overlap_hap {
   input {
     File pav_conf
     File pav_asm
-    File asmGz
     String hap
-    File bedGz
     String threads
     String mem_gb
     String sample
@@ -16,16 +14,16 @@ task align_cut_tig_overlap_hap {
     set -eux
     cp ~{pav_conf} ./config.json
     tar zxvf ~{pav_asm}
-    tar zxvf ~{asmGz}
-    tar zxvf ~{bedGz}
     mv /opt/pav /cromwell_root/
     tree
     snakemake -s pav/Snakefile --cores ~{threads} results/~{sample}/align/aligned_tig_~{hap}.bed.gz
-    tar czvf align_cut_tig_overlap_~{hap}_~{sample}.tgz results/~{sample}/align/aligned_tig_~{hap}.bed.gz
+    tar czvf align_cut_tig_overlap_~{hap}_~{sample}.tgz results/~{sample}/align/aligned_tig_~{hap}.bed.gz temp/~{sample}/align/contigs_~{hap}.fa.gz temp/~{sample}/align/contigs_~{hap}.fa.gz.fai data/ref/n_gap.bed.gz
+    tar czvf align_map_~{hap}_~{sample}.tgz temp/~{sample}/align/pre-cut/aligned_tig_~{hap}.sam.gz
   >>>
   output {
     Array[File] snakemake_logs = glob(".snakemake/log/*.snakemake.log")
     File trimBed = "align_cut_tig_overlap_~{hap}_~{sample}.tgz"
+    File rawAlign = "align_map_~{hap}_~{sample}.tgz"
   }
   ############################
   runtime {
